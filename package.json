@@ -1,0 +1,34 @@
+{
+  "name": "learn",
+  "version": "1.0.0",
+  "description": "``` “有木生山上，名曰枫木。枫木，蚩尤所弃其桎梏；是谓枫木；蚩尤为黄帝所得，械而杀之，已摘弃其械，化而为树也；” ——《山海经·大荒南经》 ```",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gdxw/learn.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/gdxw/learn/issues"
+  },
+  "homepage": "https://github.com/gdxw/learn#readme",
+  "dependencies": {
+    "mobx": "^5.9.4",
+    "mobx-react": "^5.4.3",
+    "react": "^16.8.6",
+    "react-dom": "^16.8.6"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.4.0",
+    "@babel/plugin-proposal-class-properties": "^7.4.0",
+    "@babel/plugin-proposal-decorators": "^7.4.0",
+    "@babel/preset-react": "^7.0.0",
+    "babel-loader": "^8.0.5",
+    "webpack": "^4.29.6",
+    "webpack-cli": "^3.3.0"
+  }
+}
