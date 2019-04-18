@@ -4,8 +4,9 @@ module.exports = {
     mode: "development",
     devtool: "inline-source-map",
     entry:  {
-        main: path.resolve(__dirname, "src/index.js"),
-        app: path.resolve(__dirname, "src/app.js"),
+        mixin: path.resolve(__dirname, "src/mixin.js"),
+        hoc: path.resolve(__dirname, "src/hoc.js"),
+        hook: path.resolve(__dirname, "src/hook.js"),
     },
     output: {
         path: path.resolve(__dirname, "dist")

@@ -1,0 +1,6 @@
+{
+    "compilerOptions": {
+        "emitDecoratorMetadata": true,   // 让编辑器支持 es6的修饰语法
+        "experimentalDecorators": true
+    }
+}
