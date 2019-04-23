@@ -333,3 +333,95 @@ function debugHOC(WrappedComponent) {
 ```
 
 上面的HOC在render中将props和state打印出来，可以用作调试阶段，当然你可以在里面写更多的调试代码。想象一下，只需要在我们想要调试的组件上加上@debug就可以对该组件进行调试，而不需要在每次调试的时候写很多冗余代码。(如果你还不知道怎么使用HOC，请👇如何使用HOC)
+
+### 渲染劫持
+
+高阶组件可以在render函数中做非常多的操作，从而控制原组件的渲染输出。只要改变了原组件的渲染，我们都将它称之为一种渲染劫持。
+
+实际上，上面的组合渲染和条件渲染都是渲染劫持的一种，通过反向继承，不仅可以实现以上两点，还可直接增强由原组件render函数产生的React元素。
+
+通过反向继承实现
+``` js
+function hijackHOC(WrappedComponent) {
+  return class extends WrappedComponent {
+    render() {
+      const tree = super.render();
+      let newProps = {};
+      if (tree && tree.type === 'input') {
+        newProps = { value: '渲染被劫持了' };
+      }
+      const props = Object.assign({}, tree.props, newProps);
+      const newTree = React.cloneElement(tree, props, tree.props.children);
+      return newTree;
+    }
+  }
+}
+```
+>注意上面的说明我用的是增强而不是更改。render函数内实际上是调用React.creatElement产生的React元素：
+
+不能直接修改，我们可以借助cloneElement方法来在原组件的基础上增强一个新组件：
+
+>React.cloneElement()克隆并返回一个新的React元素，使用 element 作为起点。生成的元素将会拥有原始元素props与新props的浅合并。新的子级会替换现有的子级。来自原始元素的 key 和 ref 将会保留。
+
+React.cloneElement() 几乎相当于：
+``` jsx
+<element.type {...element.props} {...props}>{children}</element.type>
+```
+
+## 如何使用HOC
+
+上面的示例代码都写的是如何声明一个HOC，HOC实际上是一个函数，所以我们将要增强的组件作为参数调用HOC函数，得到增强后的组件。
+
+``` js
+class myComponent extends Component {
+  render() {
+    return (<span>原组件</span>)
+  }
+}
+export default inheritHOC(myComponent);
+```
+
+### compose
+
+在实际应用中，一个组件可能被多个HOC增强，我们使用的是被所有的HOC增强后的组件，借用一张装饰模式的图来说明，可能更容易理解：
+![compose](./img/compose.jpg)
+
+``` js
+logger(visible(style(Input)))
+```
+
+这种代码非常的难以阅读，我们可以手动封装一个简单的函数组合工具，将写法改写如下：
+``` js
+const compose = (...fns) => fns.reduce((f, g) => (...args) => g(f(...args)));
+compose(logger,visible,style)(Input);
+```
+compose函数返回一个所有函数组合后的函数，compose(f, g, h) 和 (…args) => f(g(h(…args)))是一样的。
+
+很多第三方库都提供了类似compose的函数，例如lodash.flowRight，Redux提供的combineReducers函数等。
+
+### Decorators
+
+我们还可以借助ES7为我们提供的Decorators来让我们的写法变的更加优雅：
+
+``` js
+@logger
+@visible
+@style
+class Input extends Component {
+  // ...
+}
+```
+
+还可以结合上面的compose函数使用：
+
+``` js
+const hoc = compose(logger, visible, style);
+@hoc
+class Input extends Component {
+  // ...
+}
+```
+
+### HOC的实际应用
+
+下面是一些我在生产环境中实际对HOC的实际应用场景，由于文章篇幅原因，代码经过很多简化，如有问题欢迎在评论区指出：
